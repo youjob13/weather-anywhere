@@ -2,7 +2,10 @@ const setEnv = () => {
   const fs = require("fs");
   const writeFile = fs.writeFile;
 
-  const targetPath = "./src/environments/environment.ts";
+  const filePath = "./src/environments/environment.ts";
+  const dirPath = path.dirname(filePath);
+
+  ensureDirectoryExists(dirPath);
 
   const envConfigFile = `export const environment = {
   apiKey: '${process.env.API_KEY}',
@@ -25,3 +28,12 @@ const setEnv = () => {
 };
 
 setEnv();
+
+function ensureDirectoryExists(directory) {
+  if (!fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true });
+    console.log(`Directory created: ${directory}`);
+  } else {
+    console.log(`Directory already exists: ${directory}`);
+  }
+}
