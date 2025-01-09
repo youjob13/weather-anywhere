@@ -9,7 +9,7 @@ const setEnv = () => {
   openWeatherEndpoint: '${process.env.OPEN_WEATHER_API}',
 };
 `;
-  console.log(
+  console.info(
     "The file `environment.ts` will be written with the following content: \n"
   );
   writeFile(targetPath, envConfigFile, (err) => {
@@ -17,7 +17,7 @@ const setEnv = () => {
       console.error(err);
       throw err;
     } else {
-      console.log(
+      console.info(
         `Angular environment.ts file generated correctly at ${targetPath} \n`
       );
     }
