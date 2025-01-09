@@ -34,8 +34,8 @@ setEnv();
 function ensureDirectoryExists(directory) {
   if (!fs.existsSync(directory)) {
     fs.mkdirSync(directory, { recursive: true });
-    console.log(`Directory created: ${directory}`);
+    console.info(`Directory created: ${directory}`);
   } else {
-    console.log(`Directory already exists: ${directory}`);
+    console.info(`Directory already exists: ${directory}`);
   }
 }
