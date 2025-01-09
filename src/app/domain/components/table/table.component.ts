@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import {
   MAX_PAGE_NUMBER,
@@ -17,7 +22,11 @@ export class TableComponent {
   readonly openWeatherService = inject(OpenWeatherService);
   readonly MAX_PAGE_NUMBER = MAX_PAGE_NUMBER;
 
+  constructor() {
+    this.openWeatherService.init();
+  }
+
   loadMore() {
-    this.openWeatherService.loadMore().subscribe();
+    this.openWeatherService.loadMore();
   }
 }

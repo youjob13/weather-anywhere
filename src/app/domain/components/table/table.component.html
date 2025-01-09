@@ -1,15 +1,12 @@
 @if (openWeatherService.isLoading()) {
 <div class="loader"></div>
 }
-
 <!--  -->
 
 @if (openWeatherService.currentWeather(); as weather) {
 <table>
   <caption>
-    {{
-      weather.city
-    }}
+    <h3>{{ weather.city }}</h3>
   </caption>
   <thead>
     <tr>
@@ -25,8 +22,8 @@
     @for( item of (weather.data); track item.time) {
     <tr>
       <td>{{ item.time | date : "HH:mm" }}</td>
-      <td>{{ item.temperature }}</td>
-      <td>{{ item.feelsLike }}</td>
+      <td>{{ item.temperature }}°C</td>
+      <td>{{ item.feelsLike }}°C</td>
       <td id="icon">
         <img
           id="wicon"
@@ -36,13 +33,14 @@
           alt="Weather icon"
         />
       </td>
-      <td>{{ item.precipitation }}</td>
+      <td>{{ item.precipitation }}%</td>
       <td>{{ item.cloudiness }}%</td>
     </tr>
     }
   </tbody>
   <tfoot>
     <button
+      class="button"
       (click)="loadMore()"
       [disabled]="
         openWeatherService.isLoading() ||
@@ -54,3 +52,10 @@
   </tfoot>
 </table>
 }
+<!--  -->
+@else if (!openWeatherService.isLoading() && openWeatherService.searchValue() &&
+!openWeatherService.currentCity()){ Nothing found 🥲 }
+
+<!--  -->
+@else if (!openWeatherService.isLoading() && openWeatherService.searchValue()
+=== '') { Please type something }

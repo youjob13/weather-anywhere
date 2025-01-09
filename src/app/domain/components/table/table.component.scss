@@ -16,7 +16,6 @@
 
 .loader::before {
   content: "";
-  box-sizing: border-box;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -33,5 +32,67 @@
 @keyframes spinner {
   to {
     transform: rotate(360deg);
+  }
+}
+
+caption,
+table {
+  border-spacing: 0;
+  border: 2px solid black;
+}
+
+caption {
+  border-bottom: 0;
+}
+
+table tbody,
+table thead {
+  display: block;
+}
+
+table tbody {
+  height: 470px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+tbody {
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+tbody td,
+thead th {
+  min-width: 120px;
+}
+
+tbody td:not(:last-child),
+thead th:not(:last-child) {
+  border-right: 2px solid black;
+}
+
+thead th {
+  padding: 10px;
+}
+
+tbody tr:not(:last-child) td {
+  border-bottom: 2px solid black;
+}
+
+td {
+  text-align: center;
+}
+
+.button {
+  display: block;
+  margin: 12px auto;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 600;
+
+  &:focus {
+    outline: none;
   }
 }
