@@ -17,13 +17,13 @@ const setEnv = () => {
   console.info(
     "The file `environment.ts` will be written with the following content: \n"
   );
-  writeFile(targetPath, envConfigFile, (err) => {
+  writeFile(filePath, envConfigFile, (err) => {
     if (err) {
       console.error(err);
       throw err;
     } else {
       console.info(
-        `Angular environment.ts file generated correctly at ${targetPath} \n`
+        `Angular environment.ts file generated correctly at ${filePath} \n`
       );
     }
   });
