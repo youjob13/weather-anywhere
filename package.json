@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "configure": "node scripts/set-env.js",
-    "deploy": "ng deploy"
+    "deploy": "ng deploy --repo=https://github.com/youjob13/weather-anywhere.git"
   },
   "private": true,
   "dependencies": {
