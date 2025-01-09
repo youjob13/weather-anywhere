@@ -1,18 +1,17 @@
 import { inject, Injectable } from '@angular/core';
-import { APP_CONFIG } from '../../../config';
 import { HttpClient } from '@angular/common/http';
 import { IGeolocationRaw } from '../../models/geolocation.models';
 import { map, Observable } from 'rxjs';
 import { ICityWeatherRawData } from '../../models/weather.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OpenWeatherAPIService {
   private readonly httpClient = inject(HttpClient);
-  private readonly appConfig = inject(APP_CONFIG);
-  private readonly openWeatherEndpoint = this.appConfig.openWeatherEndpoint;
-  private readonly apiKey = this.appConfig.apiKey;
+  private readonly openWeatherEndpoint = environment.openWeatherEndpoint;
+  private readonly apiKey = environment.apiKey;
 
   public getCityCoordinates(
     city: string,
