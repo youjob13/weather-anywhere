@@ -1,0 +1,56 @@
+@if (openWeatherService.isLoading()) {
+<div class="loader"></div>
+}
+
+<!--  -->
+
+@if (openWeatherService.currentWeather(); as weather) {
+<table>
+  <caption>
+    {{
+      weather.city
+    }}
+  </caption>
+  <thead>
+    <tr>
+      <th>Time</th>
+      <th>Temperature</th>
+      <th>Feels Like</th>
+      <th>Weather</th>
+      <th>Precipitation</th>
+      <th>Cloudiness</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for( item of (weather.data); track item.time) {
+    <tr>
+      <td>{{ item.time | date : "HH:mm" }}</td>
+      <td>{{ item.temperature }}</td>
+      <td>{{ item.feelsLike }}</td>
+      <td id="icon">
+        <img
+          id="wicon"
+          [src]="
+            'http://openweathermap.org/img/w/' + item.weather.icon + '.png'
+          "
+          alt="Weather icon"
+        />
+      </td>
+      <td>{{ item.precipitation }}</td>
+      <td>{{ item.cloudiness }}%</td>
+    </tr>
+    }
+  </tbody>
+  <tfoot>
+    <button
+      (click)="loadMore()"
+      [disabled]="
+        openWeatherService.isLoading() ||
+        openWeatherService.currentPage() === MAX_PAGE_NUMBER
+      "
+    >
+      Load more
+    </button>
+  </tfoot>
+</table>
+}
