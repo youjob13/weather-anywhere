@@ -1,17 +1,21 @@
-import {
-  DestroyRef,
-  inject,
-  Injectable,
-  Injector,
-  signal,
-} from '@angular/core';
+import { effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { OpenWeatherAPIService } from '../open-weather-api/open-weather-api.service';
-import { EMPTY, finalize, map, skip, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  EMPTY,
+  filter,
+  finalize,
+  map,
+  of,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { ICityWeather } from '../../models/weather.model';
 import { transformRawData } from './utils';
 import { IGeolocationRaw } from '../../models/geolocation.models';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 const INITIAL_PAGE_NUMBER = 1;
 export const MAX_PAGE_NUMBER = 5;
@@ -20,71 +24,77 @@ export const MAX_PAGE_NUMBER = 5;
   providedIn: 'root',
 })
 export class OpenWeatherService {
-  private readonly destroyRef = inject(DestroyRef);
-  private readonly injector = inject(Injector);
   private readonly openWeatherAPIService = inject(OpenWeatherAPIService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  readonly searchValue = signal<string | null>(null);
+  readonly searchValue = signal<string>('');
+  readonly currentPage = signal<number>(INITIAL_PAGE_NUMBER);
   readonly isLoading = signal<boolean>(false);
   readonly currentCity = signal<IGeolocationRaw | null>(null);
   readonly currentWeather = signal<ICityWeather | null>(null);
-  readonly currentPage = signal<number>(INITIAL_PAGE_NUMBER);
 
-  public init() {
-    this.route.queryParams
+  loadMore$$ = new Subject();
+  loadWeather$$ = new BehaviorSubject<{ city: string; page?: number }>({
+    city: '',
+    page: INITIAL_PAGE_NUMBER,
+  });
+
+  constructor() {
+    this.loadWeather$$
       .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        skip(1),
-        switchMap((data) => {
-          const newCurrentPage = Number(data['page'] ?? INITIAL_PAGE_NUMBER);
-          return this.loadCityWeather(data['city'], newCurrentPage);
+        takeUntilDestroyed(),
+        filter(
+          ({ city }) => this.searchValue().toLowerCase() !== city.toLowerCase()
+        ),
+        switchMap(({ city, page }) => this.loadCityWeather(city, page))
+      )
+      .subscribe();
+
+    this.loadMore$$
+      .pipe(
+        takeUntilDestroyed(),
+        switchMap(() => {
+          const currentPage = this.currentPage();
+          const currentCity = this.currentCity();
+
+          if (!currentCity || MAX_PAGE_NUMBER === currentPage) {
+            return of(undefined);
+          }
+
+          this.isLoading.set(true);
+
+          return this.loadWeather(currentCity, currentPage + 1).pipe(
+            finalize(() => this.isLoading.set(false))
+          );
         })
       )
       .subscribe();
+
+    effect(() => {
+      const city = this.searchValue();
+      const page = this.currentPage();
+
+      if (!city) {
+        this.router.navigate([]);
+        return;
+      }
+
+      this.updateRoute(page ?? INITIAL_PAGE_NUMBER, city);
+    });
   }
 
-  public searchCity(city: string) {
-    if (this.searchValue()?.toLowerCase() === city.toLowerCase()) {
-      return;
-    }
-    this.updateRoute(INITIAL_PAGE_NUMBER, city);
-  }
-
-  public loadMore() {
-    const searchValue = this.searchValue();
-    const currentPage = this.currentPage();
-
-    if (!searchValue || MAX_PAGE_NUMBER === currentPage) {
-      return;
-    }
-
-    this.updateRoute(currentPage + 1, searchValue);
-  }
-
-  private loadCityWeather(city = '', page = INITIAL_PAGE_NUMBER) {
+  private loadCityWeather(city: string, page = INITIAL_PAGE_NUMBER) {
     const searchValue = city.trim();
     this.searchValue.set(searchValue);
 
-    if (searchValue === '') {
+    if (!searchValue) {
       return this.resetData();
     }
 
     this.isLoading.set(true);
 
-    const currentCity = this.currentCity();
-    const isLookingForTheSameCity =
-      currentCity?.name.toLowerCase() === city.toLowerCase();
-
-    const city$ = isLookingForTheSameCity
-      ? toObservable(this.currentCity, {
-          injector: this.injector,
-        })
-      : this.openWeatherAPIService.getCityCoordinates(city);
-
-    return city$.pipe(
-      take(1),
+    return this.openWeatherAPIService.getCityCoordinates(city).pipe(
       tap((cityCoordinates) => this.currentCity.set(cityCoordinates)),
       switchMap((cityCoordinates) => {
         const cityGeolocation = cityCoordinates;
@@ -93,21 +103,27 @@ export class OpenWeatherService {
           return this.resetData();
         }
 
-        return this.openWeatherAPIService.getWeatherByCoordinates(
-          cityGeolocation,
-          page
-        );
+        return this.loadWeather(cityGeolocation, page);
       }),
-      map((data) => transformRawData(data)),
-      tap((transformedData) => this.currentWeather.set(transformedData)),
-      tap(() => this.currentPage.set(page)),
       finalize(() => this.isLoading.set(false))
     );
   }
 
+  private loadWeather(cityGeolocation: IGeolocationRaw, page: number) {
+    return this.openWeatherAPIService
+      .getWeatherByCoordinates(cityGeolocation, page)
+      .pipe(
+        map((data) => transformRawData(data)),
+        tap((transformedData) => this.currentWeather.set(transformedData)),
+        tap(() => this.currentPage.set(page))
+      );
+  }
+
   private updateRoute(currentPage: number, searchValue: string) {
-    this.router.navigate([''], {
+    this.router.navigate([], {
+      relativeTo: this.route,
       queryParams: { page: currentPage, city: searchValue },
+      queryParamsHandling: 'merge',
     });
   }
 

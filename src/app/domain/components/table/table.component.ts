@@ -17,11 +17,7 @@ export class TableComponent {
   readonly openWeatherService = inject(OpenWeatherService);
   readonly MAX_PAGE_NUMBER = MAX_PAGE_NUMBER;
 
-  constructor() {
-    this.openWeatherService.init();
-  }
-
   loadMore() {
-    this.openWeatherService.loadMore();
+    this.openWeatherService.loadMore$$.next(undefined);
   }
 }
