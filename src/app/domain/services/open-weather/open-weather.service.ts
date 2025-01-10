@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { OpenWeatherAPIService } from '../open-weather-api/open-weather-api.service';
-import { EMPTY, map, skip, switchMap, take, tap } from 'rxjs';
+import { EMPTY, finalize, map, skip, switchMap, take, tap } from 'rxjs';
 import { ICityWeather } from '../../models/weather.model';
 import { transformRawData } from './utils';
 import { IGeolocationRaw } from '../../models/geolocation.models';
@@ -34,28 +34,36 @@ export class OpenWeatherService {
 
   public init() {
     this.route.queryParams
-      .pipe(takeUntilDestroyed(this.destroyRef), skip(1))
-      .subscribe((data) =>
-        this.loadCityWeather(data['city'] ?? '', data['page']).subscribe()
-      );
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        skip(1),
+        switchMap((data) => {
+          const newCurrentPage = Number(data['page'] ?? INITIAL_PAGE_NUMBER);
+          return this.loadCityWeather(data['city'], newCurrentPage);
+        })
+      )
+      .subscribe();
   }
 
   public searchCity(city: string) {
+    if (this.searchValue()?.toLowerCase() === city.toLowerCase()) {
+      return;
+    }
     this.updateRoute(INITIAL_PAGE_NUMBER, city);
   }
 
   public loadMore() {
     const searchValue = this.searchValue();
+    const currentPage = this.currentPage();
 
-    if (!searchValue || MAX_PAGE_NUMBER === this.currentPage()) {
+    if (!searchValue || MAX_PAGE_NUMBER === currentPage) {
       return;
     }
 
-    this.currentPage.update((prev) => prev + 1);
-    this.updateRoute(this.currentPage(), searchValue);
+    this.updateRoute(currentPage + 1, searchValue);
   }
 
-  private loadCityWeather(city: string, page = 1) {
+  private loadCityWeather(city = '', page = INITIAL_PAGE_NUMBER) {
     const searchValue = city.trim();
     this.searchValue.set(searchValue);
 
@@ -73,7 +81,7 @@ export class OpenWeatherService {
       ? toObservable(this.currentCity, {
           injector: this.injector,
         })
-      : this.loadCityData(city);
+      : this.openWeatherAPIService.getCityCoordinates(city);
 
     return city$.pipe(
       take(1),
@@ -85,24 +93,16 @@ export class OpenWeatherService {
           return this.resetData();
         }
 
-        return this.openWeatherAPIService
-          .getWeatherByCoordinates(cityGeolocation, page)
-          .pipe(take(1));
+        return this.openWeatherAPIService.getWeatherByCoordinates(
+          cityGeolocation,
+          page
+        );
       }),
       map((data) => transformRawData(data)),
       tap((transformedData) => this.currentWeather.set(transformedData)),
-      // Use the tap instead of the finalize RxJS operator because this.route.queryParams will never complete
-      // until the service will be destroyed
-      tap({
-        next: () => this.isLoading.set(false),
-        finalize: () => this.isLoading.set(false),
-      })
+      tap(() => this.currentPage.set(page)),
+      finalize(() => this.isLoading.set(false))
     );
-  }
-
-  private loadCityData(city: string) {
-    this.currentPage.set(INITIAL_PAGE_NUMBER);
-    return this.openWeatherAPIService.getCityCoordinates(city);
   }
 
   private updateRoute(currentPage: number, searchValue: string) {

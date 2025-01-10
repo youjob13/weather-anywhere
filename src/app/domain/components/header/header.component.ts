@@ -7,8 +7,8 @@ import {
 import { InputComponent } from '../../../common/components/input.component';
 import { OpenWeatherService } from '../../services/open-weather/open-weather.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { tap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { skip, skipUntil, skipWhile, tap } from 'rxjs';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -26,25 +26,24 @@ export class HeaderComponent {
     const effectRef = effect(
       () => {
         const searchValue = this.openWeatherService.searchValue();
-        if (searchValue) {
+
+        if (searchValue == null) {
+          return;
+        }
+
+        if (this.inputControl.value == null) {
           this.inputControl.setValue(searchValue);
         }
+
+        effectRef.destroy();
       },
-      {
-        manualCleanup: true,
-      }
+      { manualCleanup: true }
     );
 
     this.inputControl.valueChanges
       .pipe(
         takeUntilDestroyed(),
-        tap((value) => {
-          if (value != null) {
-            this.openWeatherService.searchCity(value);
-          } else {
-            effectRef.destroy();
-          }
-        })
+        tap((value) => this.openWeatherService.searchCity(value!))
       )
       .subscribe();
   }
