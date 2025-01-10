@@ -14,7 +14,7 @@ export const transformRawData = (
       temperature: value.main.temp,
       feelsLike: value.main.feels_like,
       weather: value.weather[0],
-      precipitation: null,
+      precipitation: value.pop,
       cloudiness: value.clouds.all,
     })),
   };

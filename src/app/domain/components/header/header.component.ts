@@ -7,7 +7,7 @@ import {
 import { InputComponent } from '../../../common/components/input.component';
 import { OpenWeatherService } from '../../services/open-weather/open-weather.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { distinctUntilChanged, EMPTY, switchMap, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({

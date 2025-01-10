@@ -1,10 +1,5 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  effect,
-  inject,
-} from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { DatePipe, PercentPipe } from '@angular/common';
 import {
   MAX_PAGE_NUMBER,
   OpenWeatherService,
@@ -16,7 +11,7 @@ import { ReactiveFormsModule } from '@angular/forms';
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, PercentPipe, ReactiveFormsModule],
 })
 export class TableComponent {
   readonly openWeatherService = inject(OpenWeatherService);

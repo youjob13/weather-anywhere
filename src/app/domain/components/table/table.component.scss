@@ -19,12 +19,12 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 32px;
-  height: 32px;
+  width: 50px;
+  height: 50px;
   margin-top: -16px;
   margin-left: -16px;
   border-radius: 50%;
-  border: 1px solid #ccc;
+  border: 5px solid #ccc;
   border-top-color: #07d;
   animation: spinner 600ms linear infinite;
 }
@@ -33,16 +33,6 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-caption,
-table {
-  border-spacing: 0;
-  border: 2px solid black;
-}
-
-caption {
-  border-bottom: 0;
 }
 
 table tbody,
@@ -56,6 +46,10 @@ table tbody {
   overflow-x: hidden;
 }
 
+thead {
+  background-color: #007bff;
+}
+
 tbody {
   border-top: 2px solid black;
   border-bottom: 2px solid black;
@@ -64,35 +58,65 @@ tbody {
 tbody td,
 thead th {
   min-width: 120px;
+  text-align: center;
 }
 
-tbody td:not(:last-child),
-thead th:not(:last-child) {
-  border-right: 2px solid black;
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 thead th {
+  color: white;
   padding: 10px;
+  text-align: left;
 }
 
-tbody tr:not(:last-child) td {
-  border-bottom: 2px solid black;
+tbody td {
+  padding: 8px;
+  border-top: 1px solid #ddd;
 }
 
-td {
-  text-align: center;
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+  background-color: #ddd;
+}
+
+caption h3 {
+  padding: 10px;
+  color: #333;
+  font-weight: bold;
 }
 
 .button {
   display: block;
-  margin: 12px auto;
-  padding: 10px;
-  border-radius: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 10px auto;
   cursor: pointer;
-  text-transform: uppercase;
-  font-weight: 600;
+  border-radius: 5px;
+}
 
-  &:focus {
-    outline: none;
-  }
+button.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#icon {
+  padding: 5px;
+}
+
+img#wicon {
+  width: 50px;
+  height: 50px;
 }

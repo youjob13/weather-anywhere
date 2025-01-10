@@ -6,20 +6,8 @@ import {
   signal,
 } from '@angular/core';
 import { OpenWeatherAPIService } from '../open-weather-api/open-weather-api.service';
-import {
-  catchError,
-  EMPTY,
-  finalize,
-  first,
-  map,
-  Observable,
-  of,
-  skip,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
-import { ICityWeather, ICityWeatherRawData } from '../../models/weather.model';
+import { EMPTY, map, skip, switchMap, take, tap } from 'rxjs';
+import { ICityWeather } from '../../models/weather.model';
 import { transformRawData } from './utils';
 import { IGeolocationRaw } from '../../models/geolocation.models';
 import { ActivatedRoute, Router } from '@angular/router';

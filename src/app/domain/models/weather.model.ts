@@ -55,7 +55,7 @@ export interface ICityWeather {
     temperature: IListRawData['main']['temp'];
     feelsLike: IListRawData['main']['feels_like'];
     weather: IListRawData['weather'][0];
-    precipitation: null;
+    precipitation: IListRawData['pop'];
     cloudiness: IListRawData['clouds']['all'];
   }[];
 }

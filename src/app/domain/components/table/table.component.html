@@ -21,7 +21,10 @@
   <tbody>
     @for( item of (weather.data); track item.time) {
     <tr>
-      <td>{{ item.time | date : "HH:mm" }}</td>
+      <td>
+        <p>{{ item.time | date : "dd/MM/yyyy" }}</p>
+        <p>{{ item.time | date : "HH:mm" }}</p>
+      </td>
       <td>{{ item.temperature }}°C</td>
       <td>{{ item.feelsLike }}°C</td>
       <td id="icon">
@@ -33,7 +36,7 @@
           alt="Weather icon"
         />
       </td>
-      <td>{{ item.precipitation }}%</td>
+      <td>{{ item.precipitation | percent }}</td>
       <td>{{ item.cloudiness }}%</td>
     </tr>
     }
