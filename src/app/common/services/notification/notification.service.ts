@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, tap } from 'rxjs';
 
 interface INotification {
-  id: number;
+  id: string;
   type: 'error' | 'info' | 'warn';
   data: {
     code: number;
@@ -30,7 +30,7 @@ export class NotificationsService {
         tap((error) => {
           this.allNotifications.update((notifications) => [
             {
-              id: 123,
+              id: self.crypto.randomUUID(),
               type: 'error',
               data: { code: error.code, message: error.message },
             },
