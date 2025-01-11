@@ -1,0 +1,50 @@
+:host {
+  position: fixed;
+  right: 3%;
+  top: 3%;
+}
+
+.notification-container {
+  margin: 10px;
+  min-width: 150px;
+  max-width: 450px;
+  padding: 20px 25px 20px 20px;
+  border-radius: 5px;
+  background-color: #f2f4f8;
+  border-left: 5px solid #31708f;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  &.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 5px solid #f5c6cb;
+  }
+
+  &.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 5px solid #bee5eb;
+  }
+
+  &.warn {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left: 5px solid #ffeeba;
+  }
+}
+
+.notification-code {
+  display: flex;
+  column-gap: 6px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.notification-message {
+  font-size: 16px;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

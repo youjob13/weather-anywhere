@@ -6,7 +6,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from '@angular/core';
-import { InputComponent } from '../../../common/components/input.component';
+import { InputComponent } from '../../../common/components/input/input.component';
 import { OpenWeatherService } from '../../services/open-weather/open-weather.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { tap } from 'rxjs';

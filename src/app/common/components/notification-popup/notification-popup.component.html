@@ -1,0 +1,14 @@
+@for(notification of notificationsService.allNotifications(); track
+notification.id) {
+<div class="notification-container" [class]="notification.type">
+  <div class="notification-code">
+    <span>{{ notification.type | titlecase }}:</span>
+    <span>{{ notification.data.code }}</span>
+  </div>
+  <div class="notification-message">
+    <span [title]="notification.data.message">{{
+      notification.data.message
+    }}</span>
+  </div>
+</div>
+}
