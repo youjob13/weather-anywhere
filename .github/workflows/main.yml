@@ -22,12 +22,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
+      - name: Prepare secrets
+        run: npm run configure
         env:
           API_KEY: ${{ secrets.API_KEY }}
           OPEN_WEATHER_API: ${{ secrets.OPEN_WEATHER_API }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run build
 
-      - name: Deploy
-        run: npm run deploy
+      - name: Build
+        run: npm run build
+        env:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          API_KEY: ${{ secrets.API_KEY }}
+          OPEN_WEATHER_API: ${{ secrets.OPEN_WEATHER_API }}
+
+      # - name: Deploy
+      #   run: npm run deploy
