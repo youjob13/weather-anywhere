@@ -40,9 +40,8 @@ jobs:
           git config --global user.email "danil.rodionow13@gmail.com"
           git config --global user.name "Auto User"
 
-      - name: Deploy to gh pages
+      - name: Deploy
         run: |
-          git remote set-url origin https://git:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
           npm run deploy
         env:
           CI: true
