@@ -17,6 +17,7 @@ export class OpenWeatherAPIService {
     city: string,
     limit = 1
   ): Observable<IGeolocationRaw | null> {
+    console.log(this.openWeatherEndpoint);
     const url = `${this.openWeatherEndpoint}/geo/1.0/direct?q=${city}&limit=${limit}&appid=${this.apiKey}`;
     return this.httpClient
       .get<IGeolocationRaw[]>(url)
