@@ -20,7 +20,7 @@
   </thead>
   <tbody>
     @for( item of (weather.data); track item.time) {
-    <tr>
+    <tr #items>
       <td>
         <p>{{ item.time | date : "dd/MM/yyyy" }}</p>
         <p>{{ item.time | date : "HH:mm" }}</p>
@@ -60,5 +60,5 @@
 !openWeatherService.currentCity()){ Nothing found 🥲 }
 
 <!--  -->
-@else if (!openWeatherService.isLoading() && openWeatherService.searchValue()
-=== '') { Please type something }
+@else if (!openWeatherService.isLoading() && !openWeatherService.searchValue() )
+{ Please type something }

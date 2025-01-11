@@ -17,6 +17,11 @@ import { IGeolocationRaw } from '../../models/geolocation.models';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+interface ILoadWeatherParams {
+  city: string;
+  page?: number;
+}
+
 const INITIAL_PAGE_NUMBER = 1;
 export const MAX_PAGE_NUMBER = 5;
 
@@ -34,8 +39,8 @@ export class OpenWeatherService {
   readonly currentCity = signal<IGeolocationRaw | null>(null);
   readonly currentWeather = signal<ICityWeather | null>(null);
 
-  loadMore$$ = new Subject();
-  loadWeather$$ = new BehaviorSubject<{ city: string; page?: number }>({
+  readonly loadMore$$ = new Subject();
+  readonly loadWeather$$ = new BehaviorSubject<ILoadWeatherParams>({
     city: '',
     page: INITIAL_PAGE_NUMBER,
   });
@@ -96,15 +101,11 @@ export class OpenWeatherService {
 
     return this.openWeatherAPIService.getCityCoordinates(city).pipe(
       tap((cityCoordinates) => this.currentCity.set(cityCoordinates)),
-      switchMap((cityCoordinates) => {
-        const cityGeolocation = cityCoordinates;
-
-        if (cityGeolocation == null) {
-          return this.resetData();
-        }
-
-        return this.loadWeather(cityGeolocation, page);
-      }),
+      switchMap((cityCoordinates) =>
+        cityCoordinates == null
+          ? this.resetData()
+          : this.loadWeather(cityCoordinates, page)
+      ),
       finalize(() => this.isLoading.set(false))
     );
   }
