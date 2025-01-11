@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, tap } from 'rxjs';
+import { map, Subject, tap } from 'rxjs';
 
 interface INotification {
   id: string;
@@ -27,20 +27,24 @@ export class NotificationsService {
     this.pushError$$
       .pipe(
         takeUntilDestroyed(),
-        tap((error) => {
+        map((error) => {
+          const notificationId = self.crypto.randomUUID();
           this.allNotifications.update((notifications) => [
             {
-              id: self.crypto.randomUUID(),
+              id: notificationId,
               type: 'error',
               data: { code: error.code, message: error.message },
             },
             ...notifications,
           ]);
+          return notificationId;
         }),
-        tap(() => {
+        tap((notificationId) => {
           setTimeout(() => {
             this.allNotifications.update((notifications) =>
-              notifications.slice(0, -1)
+              notifications.filter(
+                (notification) => notification.id !== notificationId
+              )
             );
           }, TIME_TO_DISPLAY_NOTIFICATION);
         })
