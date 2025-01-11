@@ -35,15 +35,15 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           OPEN_WEATHER_API: ${{ secrets.OPEN_WEATHER_API }}
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+      - name: Add user
+        run: |
+          git config --global user.email "danil.rodionow13@gmail.com"
+          git config --global user.name "Auto User"
+
+      - name: Deploy to gh pages
+        run: |
+          git remote set-url origin https://git:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npm run deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      # - name: Deploy to gh pages
-      #   run: |
-      #     git remote set-url origin https://git:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-      #     npm run deploy
-      #   env:
-      #     CI: true
-      #     GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          CI: true
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
