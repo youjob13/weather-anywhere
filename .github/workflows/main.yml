@@ -35,5 +35,9 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           OPEN_WEATHER_API: ${{ secrets.OPEN_WEATHER_API }}
 
-      - name: Deploy
-        run: npm run deploy
+      - name: Deploy to gh pages
+        run: |
+          npx angular-cli-ghpages --dir=dist/your-angular-app
+        env:
+          CI: true
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
