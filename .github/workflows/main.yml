@@ -35,5 +35,5 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
           OPEN_WEATHER_API: ${{ secrets.OPEN_WEATHER_API }}
 
-      # - name: Deploy
-      #   run: npm run deploy
+      - name: Deploy
+        run: npm run deploy
