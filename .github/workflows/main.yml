@@ -30,10 +30,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          API_KEY: ${{ secrets.API_KEY }}
-          OPEN_WEATHER_API: ${{ secrets.OPEN_WEATHER_API }}
 
       - name: Add user
         run: |
